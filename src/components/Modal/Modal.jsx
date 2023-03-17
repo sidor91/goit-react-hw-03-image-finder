@@ -15,7 +15,6 @@ class Modal extends Component {
 
   escPress = e => {
     if (e.code === 'Escape') {
-      console.log(e.code);
       this.props.onClick();
     }
   };
