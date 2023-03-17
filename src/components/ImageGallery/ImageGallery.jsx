@@ -50,7 +50,7 @@ class ImageGallery extends Component {
   };
 
   onLoadMoreClick = () => {
-      this.setState(prevState => ({ page: prevState.page + 1 }));
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   closeModal = () => {
@@ -58,6 +58,9 @@ class ImageGallery extends Component {
   };
 
   clickHandler = e => {
+    if (e.target === e.currentTarget) {
+      return;
+    }
     const imageURL = e.target.getAttribute('data-url');
     this.setState({ largeImageURL: imageURL });
     this.setState(prevState => ({ showModal: !prevState.showModal }));
