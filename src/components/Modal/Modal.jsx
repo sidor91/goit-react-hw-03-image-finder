@@ -1,6 +1,7 @@
 import css from './Modal.module.css';
 import { createPortal } from 'react-dom';
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 
 const modalRoot = document.querySelector('#modal')
 
@@ -38,3 +39,8 @@ class Modal extends Component {
 };
 
 export default Modal;
+
+Modal.propTypes = {
+  imageURL: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+};

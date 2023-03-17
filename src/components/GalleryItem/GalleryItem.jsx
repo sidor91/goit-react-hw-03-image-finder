@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import css from './GalleryItem.module.css';
 
 const GalleryItem = ({ url, title, largeImage }) => {
@@ -14,3 +15,8 @@ const GalleryItem = ({ url, title, largeImage }) => {
 };
 
 export default GalleryItem;
+GalleryItem.propTypes = {
+  url: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  largeImage: PropTypes.string.isRequired,
+};

@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { fetchImages } from '../../services/images-api';
 import Modal from '../Modal';
@@ -90,3 +91,7 @@ class ImageGallery extends Component {
   }
 }
 export default ImageGallery;
+
+ImageGallery.propTypes = {
+  searchQuery: PropTypes.string.isRequired,
+};
