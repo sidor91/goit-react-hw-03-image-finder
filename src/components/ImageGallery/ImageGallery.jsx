@@ -10,43 +10,56 @@ import Loader from '../Loader';
 
 class ImageGallery extends Component {
   state = {
+    searchQuery: '',
     searchResult: [],
-    page: 1,
+    page: 0,
     isLoading: false,
     showModal: false,
     largeImageURL: '',
     error: null,
   };
 
+  componentDidMount() {
+    this.fetchHandler();
+  }
+
   componentDidUpdate(prevProps, prevState) {
     const { searchQuery } = this.props;
     const { page } = this.state;
-    if (prevState.page !== page) {
-      this.fetchHandler(searchQuery, page);
-    }
     if (prevProps.searchQuery !== searchQuery) {
-      this.setState({ page: 1, searchResult: [] });
-      this.fetchHandler(searchQuery, page);
+      this.setState({
+        searchResult: [],
+        page: 1,
+        searchQuery: searchQuery,
+      });
+    }
+      if (prevState.page !== page) {
+      this.fetchHandler();
     }
   }
 
-  fetchHandler = (searchQuery, page) => {
+  fetchHandler = () => {
+    if (this.state.page === 0) {
+      return;
+    }
     this.setState({ isLoading: true });
-    fetchImages(searchQuery, page)
-      .then(result => {
-        if (result.hits.length === 0) {
-          this.setState({ searchResult: [], page: 1 });
-          return toast(
-            `There are no images by search request "${searchQuery}"`,
-            { theme: 'dark' }
-          );
-        }
-        this.setState(prevState => ({
-          searchResult: [...prevState.searchResult, ...result.hits],
-        }));
-      })
-      .catch(error => this.setState({ error }))
-      .finally(this.setState({ isLoading: false }));
+    setTimeout(() => {
+      fetchImages(this.props.searchQuery, this.state.page)
+        .then(result => {
+          if (result.hits.length === 0) {
+            this.setState({ searchResult: [], page: 1 });
+            return toast(
+              `There are no images by search request "${this.props.searchQuery}"`,
+              { theme: 'dark' }
+            );
+          }
+          this.setState(prevState => ({
+            searchResult: [...prevState.searchResult, ...result.hits],
+          }));
+        })
+        .catch(error => this.setState({ error }))
+        .finally(this.setState({ isLoading: false }));
+    }, 500);
   };
 
   onLoadMoreClick = () => {
