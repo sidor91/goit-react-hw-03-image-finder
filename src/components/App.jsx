@@ -1,24 +1,74 @@
 import { Component } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
+import { fetchImages } from '../services/images-api';
+import Button from './Button';
+import Loader from './Loader';
 
 export class App extends Component {
   state = {
     searchQuery: '',
+    page: 1,
+    searchResult: [],
+    isLoading: false,
+    error: null,
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    const { searchQuery, page } = this.state;
+    if (prevState.searchQuery !== searchQuery) {
+      this.fetchHandler();
+    }
+    if (
+      prevState.page !== page &&
+      prevState.searchQuery === this.state.searchQuery
+    ) {
+      this.fetchHandler();
+    }
+  }
+
   handleFormSubmit = searchQuery => {
-    this.setState({ searchQuery: searchQuery });
+    this.setState({ searchQuery, page: 1, searchResult: [] });
+  };
+
+  fetchHandler = () => {
+    const { searchQuery, page } = this.state;
+    this.setState({ isLoading: true });
+    setTimeout(() => {
+      fetchImages(searchQuery, page)
+        .then(result => {
+          if (result.hits.length === 0) {
+            this.setState({ searchResult: [], page: 1 });
+            return toast(
+              `There are no images by search request "${this.props.searchQuery}"`,
+              { theme: 'dark' }
+            );
+          }
+          this.setState(prevState => ({
+            searchResult: [...prevState.searchResult, ...result.hits],
+          }));
+        })
+        .catch(error => this.setState({ error }))
+        .finally(this.setState({ isLoading: false }));
+    }, 500);
+  };
+
+  onLoadMoreClick = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   render() {
-    const { searchQuery } = this.state;
+    const { isLoading, searchResult } = this.state;
     return (
       <div className="app">
         <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery searchQuery={searchQuery} />
+        {searchResult.length > 0 && (
+          <ImageGallery searchResult={searchResult} />
+        )}
+        {isLoading && <Loader />}
+        {searchResult.length > 0 && <Button onClick={this.onLoadMoreClick} />}
         <ToastContainer theme="dark" />
       </div>
     );
