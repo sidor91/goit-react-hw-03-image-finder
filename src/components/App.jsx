@@ -42,7 +42,7 @@ export class App extends Component {
           if (result.hits.length === 0) {
             this.setState({ searchResult: [], page: 1 });
             return toast(
-              `There are no images by search request "${this.props.searchQuery}"`,
+              `There are no images by search request "${searchQuery}"`,
               { theme: 'dark' }
             );
           }
