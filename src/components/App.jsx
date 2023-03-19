@@ -33,10 +33,13 @@ export class App extends Component {
     this.setState({ searchQuery, page: 1, searchResult: [] });
   };
 
+  toggleLoader = () => {
+    this.setState(prevState => ({ isLoading: !prevState.isLoading }));
+  }
+
   fetchHandler = () => {
     const { searchQuery, page } = this.state;
-    this.setState({ isLoading: true });
-    setTimeout(() => {
+    this.toggleLoader();
       fetchImages(searchQuery, page)
         .then(result => {
           if (result.hits.length === 0) {
@@ -50,9 +53,7 @@ export class App extends Component {
             searchResult: [...prevState.searchResult, ...result.hits],
           }));
         })
-        .catch(error => this.setState({ error }))
-        .finally(this.setState({ isLoading: false }));
-    }, 500);
+        .catch(error => this.setState({ error })).finally(() => {this.toggleLoader()})
   };
 
   onLoadMoreClick = () => {
