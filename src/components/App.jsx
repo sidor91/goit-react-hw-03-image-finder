@@ -69,7 +69,9 @@ export class App extends Component {
           <ImageGallery searchResult={searchResult} />
         )}
         {isLoading && <Loader />}
-        {searchResult.length > 0 && <Button onClick={this.onLoadMoreClick} />}
+        {searchResult.length > 0 && !isLoading && (
+          <Button onClick={this.onLoadMoreClick} />
+        )}
         <ToastContainer theme="dark" />
       </div>
     );
